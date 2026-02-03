@@ -2,8 +2,21 @@ import requests
 import time
 import random
 import re
-import winsound
 import os
+import sys
+
+# Platform-specific imports
+try:
+    import winsound
+    HAS_WINSOUND = True
+except ImportError:
+    HAS_WINSOUND = False
+
+try:
+    from plyer import notification
+    HAS_PLYER = True
+except ImportError:
+    HAS_PLYER = False
 
 channel_id = "1292058301760143392" 
 token = os.getenv("DISCORD_TOKEN")
@@ -43,24 +56,28 @@ def check_for_captcha():
 def notify_captcha():
     """Send notification alert for captcha"""
     # Play alert sound - 3 beeps
-    for i in range(3):
-        winsound.Beep(1000, 500)  # 1000 Hz for 500ms
-        time.sleep(0.3)
+    # Play alert sound if available
+    if HAS_WINSOUND:
+        for i in range(3):
+            winsound.Beep(1000, 500)  # 1000 Hz for 500ms
+            time.sleep(0.3)
     
-    # Try to show Windows notification
-    try:
-        from plyer import notification
-        notification.notify(
-            title='⚠️ CAPTCHA DETECTED',
-            message='OwO Bot requires captcha verification!\nPlease check Discord.',
-            app_name='OwO Bot',
-            timeout=10
-        )
-    except ImportError:
-        # plyer not installed, just use console output
-        print("\n" + "="*50)
-        print("⚠️  CAPTCHA ALERT! ⚠️" * 3)
-        print("="*50 + "\n")
+    # Try to show notification using plyer
+    if HAS_PLYER:
+        try:
+            notification.notify(
+                title='⚠️ CAPTCHA DETECTED',
+                message='OwO Bot requires captcha verification!\nPlease check Discord.',
+                app_name='OwO Bot',
+                timeout=10
+            )
+        except:
+            pass
+    
+    # Always print to console as fallback
+    print("\n" + "="*50)
+    print("⚠️  CAPTCHA ALERT! ⚠️" * 3)
+    print("="*50 + "\n")
 
 def wait_for_captcha_resolution(max_wait_minutes=60*24):
     """Wait for captcha to be resolved, then resume
