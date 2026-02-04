@@ -3,12 +3,20 @@ name: Run OwO script
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */5 * * *"   # every 5 hours
+    # GitHub Actions minimum reliable cron interval is 5 minutes.
+    # This runs as frequently as GitHub permits (near "non-stop").
+    - cron: "*/5 * * * *"   # every 5 minutes
 
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # GitHub-hosted runners support up to 360 minutes (6 hours).
+    # Set to max to allow longer work before the runner is terminated.
+    timeout-minutes: 360
+    # Prevent overlapping runs; new runs will queue under the same group.
+    concurrency:
+      group: owo-run
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v4
