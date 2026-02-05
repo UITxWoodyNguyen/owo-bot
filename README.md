@@ -181,9 +181,9 @@ Where the format is `<:raritygemN:ID>` representing gem types (e.g., egem3 = typ
 
 ### Token not found
 **Local Development:**
-- Ensure `src/local_token.txt` exists in the correct location
+- Ensure `src/config.json` exists in the correct location
 - Check the file contains your token with no extra whitespace
-- Verify the file path: `your_repo/src/local_token.txt`
+- Verify the file path: `your_repo/src/config.json`
 
 **GitHub Actions:**
 - Go to repository Settings → Secrets and verify `DISCORD_TOKEN` is set
